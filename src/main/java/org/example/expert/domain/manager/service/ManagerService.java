@@ -35,9 +35,19 @@ public class ManagerService {
         Todo todo = todoRepository.findById(todoId)
                 .orElseThrow(() -> new InvalidRequestException("Todo not found"));
 
-        if (!ObjectUtils.nullSafeEquals(user.getId(), todo.getUser().getId())) {
+
+//        if (!ObjectUtils.nullSafeEquals(user.getId(), todo.getUser().getId())) {
+//            throw new InvalidRequestException("담당자를 등록하려고 하는 유저가 일정을 만든 유저가 유효하지 않습니다.");
+//        }
+
+        /**
+        - Todo의 user가 null인 경우에도 바로 todo.getUser().getId()를 호출해서 NullPointerException이 발생하는 문제 직면.
+         -> todo.getUser()가 null인지 먼저 검사하고, null인 경우 기대한 InvalidRequestException을 던지도록 코드 수정.
+        */
+        if (todo.getUser() == null || !ObjectUtils.nullSafeEquals(user.getId(), todo.getUser().getId())) {
             throw new InvalidRequestException("담당자를 등록하려고 하는 유저가 일정을 만든 유저가 유효하지 않습니다.");
         }
+
 
         User managerUser = userRepository.findById(managerSaveRequest.getManagerUserId())
                 .orElseThrow(() -> new InvalidRequestException("등록하려고 하는 담당자 유저가 존재하지 않습니다."));

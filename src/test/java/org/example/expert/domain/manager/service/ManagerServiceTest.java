@@ -22,6 +22,8 @@ import org.springframework.test.util.ReflectionTestUtils;
 import java.util.List;
 import java.util.Optional;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.AssertionsForClassTypes.catchThrowable;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
@@ -51,7 +53,7 @@ class ManagerServiceTest {
 
     @Test
     void todo의_user가_null인_경우_예외가_발생한다() {
-        // given
+        //given
         AuthUser authUser = new AuthUser(1L, "a@a.com", UserRole.USER);
         long todoId = 1L;
         long managerUserId = 2L;
@@ -60,15 +62,15 @@ class ManagerServiceTest {
         ReflectionTestUtils.setField(todo, "user", null);
 
         ManagerSaveRequest managerSaveRequest = new ManagerSaveRequest(managerUserId);
-
         given(todoRepository.findById(todoId)).willReturn(Optional.of(todo));
 
-        // when & then
-        InvalidRequestException exception = assertThrows(InvalidRequestException.class, () ->
-            managerService.saveManager(authUser, todoId, managerSaveRequest)
-        );
+        //when
+        Throwable thrown = catchThrowable(() -> managerService.saveManager(authUser, todoId, managerSaveRequest));
 
-        assertEquals("담당자를 등록하려고 하는 유저가 일정을 만든 유저가 유효하지 않습니다.", exception.getMessage());
+        //then
+        assertThat(thrown)
+                .isInstanceOf(InvalidRequestException.class)
+                .hasMessage("담당자를 등록하려고 하는 유저가 일정을 만든 유저가 유효하지 않습니다.");
     }
 
     @Test // 테스트코드 샘플
@@ -94,7 +96,8 @@ class ManagerServiceTest {
         assertEquals(mockManager.getUser().getEmail(), managerResponses.get(0).getUser().getEmail());
     }
 
-    @Test // 테스트코드 샘플
+    @Test
+        // 테스트코드 샘플
     void todo가_정상적으로_등록된다() {
         // given
         AuthUser authUser = new AuthUser(1L, "a@a.com", UserRole.USER);
