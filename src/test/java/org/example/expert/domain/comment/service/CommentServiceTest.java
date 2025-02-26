@@ -19,6 +19,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Optional;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.AssertionsForClassTypes.catchThrowable;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
@@ -44,12 +46,12 @@ class CommentServiceTest {
         given(todoRepository.findById(anyLong())).willReturn(Optional.empty());
 
         // when
-        InvalidRequestException exception = assertThrows(InvalidRequestException.class, () -> {
-            commentService.saveComment(authUser, todoId, request);
-        });
+        Throwable thrown = catchThrowable(() -> commentService.saveComment(authUser, todoId, request));
 
         // then
-        assertEquals("Todo not found", exception.getMessage());
+        assertThat(thrown)
+                .isInstanceOf(InvalidRequestException.class)
+                .hasMessage("Todo not found");
     }
 
     @Test
