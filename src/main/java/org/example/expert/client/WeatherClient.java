@@ -27,7 +27,7 @@ public class WeatherClient {
                 restTemplate.getForEntity(buildWeatherApiUri(), WeatherDto[].class);
 
         WeatherDto[] weatherArray = responseEntity.getBody();
-        
+
         if (!HttpStatus.OK.equals(responseEntity.getStatusCode())) {
             throw new ServerException("날씨 데이터를 가져오는데 실패했습니다. 상태 코드: " + responseEntity.getStatusCode());
         }
