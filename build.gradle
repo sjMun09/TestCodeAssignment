@@ -45,6 +45,7 @@ dependencies {
     testImplementation 'org.junit.jupiter:junit-jupiter'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+    testImplementation 'io.github.hakky54:logcaptor:2.10.1'
 }
 
 tasks.named('test') {
