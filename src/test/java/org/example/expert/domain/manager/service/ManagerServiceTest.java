@@ -40,6 +40,7 @@ class ManagerServiceTest {
     @InjectMocks
     private ManagerService managerService;
 
+    // NPE = Null Point Exception
     @Test
     public void manager_목록_조회_시_Todo가_없다면_NPE_에러를_던진다() {
         // given
@@ -47,8 +48,9 @@ class ManagerServiceTest {
         given(todoRepository.findById(todoId)).willReturn(Optional.empty());
 
         // when & then
-        InvalidRequestException exception = assertThrows(InvalidRequestException.class, () -> managerService.getManagers(todoId));
-        assertEquals("Manager not found", exception.getMessage());
+        InvalidRequestException exception = assertThrows(InvalidRequestException.class,
+                () -> managerService.getManagers(todoId));
+        assertEquals("Todo not found", exception.getMessage());
     }
 
     @Test
